@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import sys
+import string
 
 # cur_version = int(sys.version_info[0])
 # print (cur_version)
@@ -220,47 +221,88 @@ def getOverlap(left, right, start, kmer_ind):
 	return overlaps
 
 
-kmer_ind = 1
-start = 0
+def overlap():
+	kmer_ind = 1
+	start = 0
 
-left = input("Please provide the first sequence: ")
-right = input("Please provide the second sequence: ")
+	orig_left = input("Please provide the first sequence: ")
+	orig_right = input("Please provide the second sequence: ")
 
-# left = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
-# right = "GGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTCGTCCAGACCCCTAGC"
+	left = orig_left
+	right = orig_right
 
-end = len(left)
+	# left = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
+	# right = "GGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTCGTCCAGACCCCTAGC"
 
-right = right[start:kmer_ind]
-
-ovs = []
-
-while start <= len(left):
-	tmp = getOverlap(left, right, start, kmer_ind)
-# 	ovs.append(tmp)
-
-	start += 1
-	kmer_ind += 1
+	end = len(left)
 
 	right = right[start:kmer_ind]
 
-kmer_ind = 0
+	ovs = []
 
-left = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
-right = "GGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTCGTCCAGACCCCTAGC"
-end = len(left)
+	while start <= len(left):
+		tmp = getOverlap(left, right, start, kmer_ind)
+	# 	ovs.append(tmp)
 
-left = left[kmer_ind:end]
+		start += 1
+		kmer_ind += 1
 
-while end >= 0:
-	tmp = getOverlap(left, right, kmer_ind, end)
-	ovs.append(tmp)
+		right = right[start:kmer_ind]
 
-	end = end-1
+	kmer_ind = 0
 
-	right = right[kmer_ind:end]
+# 	left = "CGATTCCAGGCTCCCoriCACGGGGTACCCATAACTTGACAGTAGATCTC"
+# 	right = "GGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTCGTCCAGACCCCTAGC"
 
-# print(ovs)
+	# reset
+	left = orig_left
+	right = orig_right
 
-longest = max(ovs)[0]
-print ("Max overlap: " + longest)
+	end = len(left)
+
+	left = left[kmer_ind:end]
+
+	while end >= 0:
+		tmp = getOverlap(left, right, kmer_ind, end)
+		ovs.append(tmp)
+
+		end = end-1
+
+		right = right[kmer_ind:end]
+
+	# print(ovs)
+
+	longest = max(ovs)[0]
+	print ("Max overlap: " + longest)
+
+
+def assembly(fname):
+	
+	chunks = []
+
+	infile = open(fname, 'r')
+	seq = ""
+
+	for line in infile:
+		toks = line.strip().split(" ")
+
+		tmp_toks = toks[1:]
+		
+		seq += "".join(tmp_toks)
+
+	seq = seq.upper()
+	
+# 	print (seq)
+
+	i = 0
+
+	# now split
+	while i <= len(seq):
+		chunks.append(seq[i:i+100])
+		i += 100
+	
+# 	print (chunks)
+# 	print(len(chunks))
+	
+# overlap()
+assembly("genome_assembly.txt")
