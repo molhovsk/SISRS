@@ -223,8 +223,12 @@ def getOverlap(left, right, start, kmer_ind):
 kmer_ind = 1
 start = 0
 
-left = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
-right = "GGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTCGTCCAGACCCCTAGC"
+left = input("Please provide the first sequence: ")
+right = input("Please provide the second sequence: ")
+
+# left = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
+# right = "GGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTCGTCCAGACCCCTAGC"
+
 end = len(left)
 
 right = right[start:kmer_ind]
@@ -258,5 +262,5 @@ while end >= 0:
 
 # print(ovs)
 
-longest = max(ovs)
-print (longest)
+longest = max(ovs)[0]
+print ("Max overlap: " + longest)
