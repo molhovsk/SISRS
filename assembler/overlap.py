@@ -2,6 +2,7 @@
 
 import sys
 import string
+import random
 
 # cur_version = int(sys.version_info[0])
 # print (cur_version)
@@ -296,13 +297,47 @@ def assembly(fname):
 
 	i = 0
 
-	# now split
+	# now split the genome into chunks of 100
 	while i <= len(seq):
 		chunks.append(seq[i:i+100])
 		i += 100
 	
+	# and scramble the chunks
+	random.shuffle(chunks)	
+
+	kmer_size = 7
+	
+	tmp_chunks = chunks
+	
+	deBruinDict = {}
+	nextKey = 0
+
+	for chunk in chunks:
+# 		print (chunk)
+		print ("LAST")
+		chunk_last = chunk[len(chunk)-kmer_size:len(chunk)]
+		print (chunk_last)
+				
+		for tc in tmp_chunks:
+			if tc != chunk:
+				chunk_first = tc[0:kmer_size]
+
+				print ("1")
+				print (chunk_first)
+					
+				if chunk_first == chunk_last:
+					print (tc)
+					deBruinDict[nextKey] = tc
+					deBruinDict[nextKey+1] = chunk
+					
+					nextKey += 2
+
+# 	print (deBruinDict)
+
 # 	print (chunks)
 # 	print(len(chunks))
+
 	
+
 # overlap()
 assembly("genome_assembly.txt")
