@@ -281,6 +281,8 @@ def assembly(fname):
 	
 	chunks = []
 
+	kmer_size = 100
+
 	infile = open(fname, 'r')
 	seq = ""
 
@@ -297,47 +299,50 @@ def assembly(fname):
 
 	i = 0
 
+	deBruinDict = {}
+
 	# now split the genome into chunks of 100
 	while i <= len(seq):
-		chunks.append(seq[i:i+100])
-		i += 100
-	
-	# and scramble the chunks
-	random.shuffle(chunks)	
-
-	kmer_size = 7
-	
-	tmp_chunks = chunks
-	
-	deBruinDict = {}
-	nextKey = 0
-
-	for chunk in chunks:
-# 		print (chunk)
-		print ("LAST")
-		chunk_last = chunk[len(chunk)-kmer_size:len(chunk)]
-		print (chunk_last)
-				
-		for tc in tmp_chunks:
-			if tc != chunk:
-				chunk_first = tc[0:kmer_size]
-
-				print ("1")
-				print (chunk_first)
-					
-				if chunk_first == chunk_last:
-					print (tc)
-					deBruinDict[nextKey] = tc
-					deBruinDict[nextKey+1] = chunk
-					
-					nextKey += 2
+		chunk = seq[i:i+kmer_size]
+		chunks.append(chunk)
+		deBruinDict[i] = chunk
+		i += 1
 
 # 	print (deBruinDict)
 
+
+'''
 # 	print (chunks)
 # 	print(len(chunks))
 
-	
+	# and scramble the chunks
+	random.shuffle(chunks)	
+
+	tmp_chunks = chunks
+# 	print (tmp_chunks)
+
+	nextKey = 0
+
+	for chunk in chunks:
+		print ("Chunk " + chunk)
+		chunk_last = chunk[1:]
+
+		nt_str = "ACGT"
+
+		for n in nt_str:
+			tmp_c = chunk_last + n
+
+			for tc in tmp_chunks:
+				print ("ok " + tc)
+				print (tmp_c)
+				print (tc.find(tmp_c))
+				
+				if tc.find(tmp_c) > 0:
+					deBruinDict[tc.find(tmp_c)] = tmp_c
+			
+			
+		exit(0)
+'''	
 
 # overlap()
 assembly("genome_assembly.txt")
