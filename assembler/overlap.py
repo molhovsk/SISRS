@@ -304,45 +304,15 @@ def assembly(fname):
 	# now split the genome into chunks of 100
 	while i <= len(seq):
 		chunk = seq[i:i+kmer_size]
-		chunks.append(chunk)
 		deBruinDict[i] = chunk
 		i += 1
 
 # 	print (deBruinDict)
 
-
-'''
-# 	print (chunks)
-# 	print(len(chunks))
-
-	# and scramble the chunks
+	chunks = deBruinDict.values()
+	
 	random.shuffle(chunks)	
 
-	tmp_chunks = chunks
-# 	print (tmp_chunks)
-
-	nextKey = 0
-
-	for chunk in chunks:
-		print ("Chunk " + chunk)
-		chunk_last = chunk[1:]
-
-		nt_str = "ACGT"
-
-		for n in nt_str:
-			tmp_c = chunk_last + n
-
-			for tc in tmp_chunks:
-				print ("ok " + tc)
-				print (tmp_c)
-				print (tc.find(tmp_c))
-				
-				if tc.find(tmp_c) > 0:
-					deBruinDict[tc.find(tmp_c)] = tmp_c
-			
-			
-		exit(0)
-'''	
 
 # overlap()
 assembly("genome_assembly.txt")
