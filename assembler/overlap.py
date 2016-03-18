@@ -281,7 +281,7 @@ def assembly(fname):
 	
 	chunks = []
 
-	kmer_size = 100
+	kmer_size = 10
 
 	infile = open(fname, 'r')
 	seq = ""
@@ -294,7 +294,7 @@ def assembly(fname):
 		seq += "".join(tmp_toks)
 
 	seq = seq.upper()
-	
+
 # 	print (seq)
 
 	i = 0
@@ -309,10 +309,44 @@ def assembly(fname):
 
 # 	print (deBruinDict)
 
-	chunks = deBruinDict.values()
+	chunks = list(deBruinDict.values())
+
+	# starting point - an unordered list of contigs
+	random.shuffle(chunks)
 	
-	random.shuffle(chunks)	
+# 	print (chunks)
 
+	tmpDict = {}
+	tmp_chunks = chunks
+	
+	i = 1
+	
+	print (tmp_chunks)
+	
+	for chunk in chunks:
+		print (chunk)
+		left = chunk[0:len(chunk)-1]
+		print (left)
+		right = chunk[1:]
+		print (right)
 
+		for tc in tmp_chunks:
+			if tc[0:len(tc)-1] == left:
+				tmpDict[i] = left
+				tmpDict[i+1] = chunk
+				i += 1
+
+			elif tc[1:] == right:
+				tmpDict[i] = chunk
+				tmpDict[i+1] = right
+				i += 1
+
+# 			else:
+# 				print("Balda ti, Marina!! :)")
+# 				print (tc)
+# 		
+# 		exit(0)
+
+	print (tmpDict)
 # overlap()
 assembly("genome_assembly.txt")
