@@ -7,6 +7,14 @@ import random
 # cur_version = int(sys.version_info[0])
 # print (cur_version)
 
+import matplotlib as mpl
+
+import pylab as p
+from pylab import figure, axes, pie, title, show
+
+
+#from pylab import *
+
 '''
 https://kaspermunch.wordpress.com/2013/11/29/exercise-genome-assembly/
 
@@ -252,7 +260,7 @@ def overlap():
 
 	kmer_ind = 0
 
-# 	left = "CGATTCCAGGCTCCCoriCACGGGGTACCCATAACTTGACAGTAGATCTC"
+# 	left = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
 # 	right = "GGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTCGTCCAGACCCCTAGC"
 
 	# reset
@@ -281,11 +289,12 @@ def assembly(fname):
 	
 	chunks = []
 
-	kmer_size = 10
+	kmer_size = 6
 
 	infile = open(fname, 'r')
 	seq = ""
 
+	'''
 	for line in infile:
 		toks = line.strip().split(" ")
 
@@ -294,8 +303,12 @@ def assembly(fname):
 		seq += "".join(tmp_toks)
 
 	seq = seq.upper()
+	'''
 
-# 	print (seq)
+	# debug - 1 sequence
+	#seq = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
+	seq = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	print (seq)
 
 	i = 0
 
@@ -305,48 +318,74 @@ def assembly(fname):
 	while i <= len(seq):
 		chunk = seq[i:i+kmer_size]
 		deBruinDict[i] = chunk
-		i += 1
 
-# 	print (deBruinDict)
+		if len(chunk) == kmer_size:
+			i += 1
+		else:
+			break			
 
+	revDict = {v: k for k, v in deBruinDict.items()}
+	#print (revDict)
+	
 	chunks = list(deBruinDict.values())
 
 	# starting point - an unordered list of contigs
 	random.shuffle(chunks)
-	
-# 	print (chunks)
+	#print (chunks)
 
 	tmpDict = {}
 	tmp_chunks = chunks
 	
-	i = 1
+	i = 0
 	
-	print (tmp_chunks)
-	
-	for chunk in chunks:
-		print (chunk)
-		left = chunk[0:len(chunk)-1]
-		print (left)
+	#print (tmp_chunks)
+	last = ""
+
+	for ind in deBruinDict:
+		chunk = deBruinDict[ind]
+		#print ("Outer loop chunk: " + chunk)
+		#left = chunk[0:len(chunk)-1]
+		#print (left)
 		right = chunk[1:]
-		print (right)
+		#print (right)
 
-		for tc in tmp_chunks:
-			if tc[0:len(tc)-1] == left:
-				tmpDict[i] = left
-				tmpDict[i+1] = chunk
-				i += 1
+		for tc in revDict:
+			#print (tc)
 
-			elif tc[1:] == right:
-				tmpDict[i] = chunk
-				tmpDict[i+1] = right
-				i += 1
+			if len(tc) == kmer_size:
+				if tc[1:] == right:
+					#print ("Chunk: " + chunk)
+					#print ("Right: " + tc[1:])
+					tmpDict[i] = chunk
+					#tmpDict[i+1] = tc
+					#print ("dict so far ")
+					#print (tmpDict)
+					chunk = tc
+					#right = tc[1:]
 
-# 			else:
-# 				print("Balda ti, Marina!! :)")
-# 				print (tc)
-# 		
-# 		exit(0)
+					i += 1
+					break
+		
+			else:
+				last = tc
 
+		#print ("HERE NOW!!")
+		#print (chunk)
+
+	#print (i)
+	#print (last)
+
+	if len(last) == kmer_size:
+		tmpDict[i] = last
+	
 	print (tmpDict)
+
+	p.plot([1,2,3])
+	pylab.savefig('foo.png') 
+
+	mpl.rcdefaults()
+
+	
+
 # overlap()
 assembly("genome_assembly.txt")
