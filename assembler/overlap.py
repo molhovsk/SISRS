@@ -4,6 +4,15 @@ import sys
 import string
 import random
 
+import networkx as nx
+
+import matplotlib
+
+# suggestion from http://stackoverflow.com/questions/2801882/generating-a-png-with-matplotlib-when-display-is-undefined
+matplotlib.use('Agg')	# call this before calling pyplot to avoid Xwindow errors
+
+import matplotlib.pyplot as plt
+
 '''
 import reportlab
 
@@ -20,9 +29,6 @@ from reportlab.lib.colors import *
 
 # cur_version = int(sys.version_info[0])
 # print (cur_version)
-
-import igraph
-from igraph import *
 
 def readDataFromFile(fileName):
 	infile = open(fileName, 'r')
@@ -151,7 +157,7 @@ def assembly(fname):
 	# debug - 1 sequence
 	#seq = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
 	seq = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	print (seq)
+	#print (seq)
 
 	i = 0
 
@@ -221,35 +227,39 @@ def assembly(fname):
 	if len(last) == kmer_size:
 		tmpDict[i] = last
 
+	gr=nx.DiGraph()
+	#gr.add_nodes_from(tmpDict.items())
 
-	seqLen = 0
+	#for t in gr.nodes():	# tuple
+	for edge in tmpDict.keys():
+		node = tmpDict[edge]
+		gr.add_node(node)
 
-	for i in tmpDict:
-		val = tmpDict[i].strip()
-		seqLen += len(val)
+		'''
+		print (t)
+		edge = int(t[0])
+		node = t[1]
+		'''
 
-	#c = Canvas(100, 300)		
+		print (edge)
+		print (node)
 
-	c = Canvas("test.pdf")
-	c.setTitle("test")
-        c.setPageSize((1000,1000))
-        c.setStrokeColorRGB(0,0,0)
-        c.saveState()
+		if edge > 0:
+			#print (tmpDict[edge-1])
+			gr.add_edge(tmpDict[edge-1], tmpDict[edge])
+		else:
+			gr.add_edge(tmpDict[edge], tmpDict[edge+1])
 
-	origin_x = 0
-	origin_y = 500 
+	'''
+	print(gr.nodes())
+	print(gr.number_of_edges())
+	print(gr.edges())
+	'''
 
-	for i in tmpDict:
-	        # Draw circle
-        	origin_x += 50
-        	radius = 20
+	nx.draw_circular(gr, with_labels = True)
+	plt.savefig("test.png")
 
-        	c.circle(origin_x, origin_y, radius)
-        	#c.restoreState()
-
-
-	c.showPage()
-	c.save()
+	#nx.write_gpickle(gr,"test.gpickle")
 
 # overlap()
 assembly("genome_assembly.txt")
