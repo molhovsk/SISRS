@@ -135,28 +135,42 @@ def overlap():
 
 
 def assembly(fname):
-	
+
 	chunks = []
 
-	kmer_size = 6
+	kmer_size = 100
 
 	infile = open(fname, 'r')
 	seq = ""
 
-	'''
 	for line in infile:
 		toks = line.strip().split(" ")
 
 		tmp_toks = toks[1:]
-		
-		seq += "".join(tmp_toks)
 
-	seq = seq.upper()
-	'''
+		for t in tmp_toks:
+			#print (t)
+			#seq += "".join(tmp_toks)
+			chunks.append(t)
+
+	#seq = seq.upper()
+	#print (chunks)
+
+	tmp_chunk = ""
+	tmp_chunks = []
+
+	for chunk in chunks:
+		if len (tmp_chunk) < kmer_size:
+			tmp_chunk += chunk
+		else:
+			tmp_chunks.append(tmp_chunk)
+			tmp_chunk = ""
+
+	print (tmp_chunks)
 
 	# debug - 1 sequence
 	#seq = "CGATTCCAGGCTCCCCACGGGGTACCCATAACTTGACAGTAGATCTC"
-	seq = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	#seq = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	#print (seq)
 
 	i = 0
@@ -164,19 +178,16 @@ def assembly(fname):
 	deBruinDict = {}
 
 	# now split the genome into chunks of 100
-	while i <= len(seq):
-		chunk = seq[i:i+kmer_size]
+	for chunk in tmp_chunks:
+		chunk = tmp_chunks[i]
+		#print (chunk)
 		deBruinDict[i] = chunk
-
-		if len(chunk) == kmer_size:
-			i += 1
-		else:
-			break			
-
+		i += 1
+	
 	revDict = {v: k for k, v in deBruinDict.items()}
 	#print (revDict)
-	
-	chunks = list(deBruinDict.values())
+
+	#chunks = list(deBruinDict.values())
 
 	# starting point - an unordered list of contigs
 	random.shuffle(chunks)
@@ -189,8 +200,10 @@ def assembly(fname):
 	
 	#print (tmp_chunks)
 	last = ""
+	#print (revDict)
+	#print (kmer_size)
 
-	for ind in deBruinDict:
+	for ind in deBruinDict.keys():
 		chunk = deBruinDict[ind]
 		#print ("Outer loop chunk: " + chunk)
 		#left = chunk[0:len(chunk)-1]
@@ -198,24 +211,25 @@ def assembly(fname):
 		right = chunk[1:]
 		#print (right)
 
-		for tc in revDict:
-			#print (tc)
+		for tc in revDict.keys():
+			print (len(tc))
 
 			if len(tc) == kmer_size:
+				print ("ok")
 				if tc[1:] == right:
 					#print ("Chunk: " + chunk)
 					#print ("Right: " + tc[1:])
 					tmpDict[i] = chunk
 					#tmpDict[i+1] = tc
-					#print ("dict so far ")
+					print ("dict so far ")
 					#print (tmpDict)
 					chunk = tc
 					#right = tc[1:]
 
 					i += 1
 					break
-		
 			else:
+				#print ("??????? " + tc)
 				last = tc
 
 		#print ("HERE NOW!!")
@@ -256,7 +270,7 @@ def assembly(fname):
 	print(gr.edges())
 	'''
 
-	nx.draw_circular(gr, with_labels = True)
+	nx.draw_circular(gr, with_labels = False)
 	plt.savefig("test.png")
 
 	#nx.write_gpickle(gr,"test.gpickle")
